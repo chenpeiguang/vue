@@ -14,11 +14,11 @@ const idToTemplate = cached(id => {
   return el && el.innerHTML
 })
 
+// 缓存一下$mount
 const mount = Vue.prototype.$mount
-Vue.prototype.$mount = function (
-  el?: string | Element,
-  hydrating?: boolean
-): Component {
+
+// 对$mount进行拓展
+Vue.prototype.$mount = function (el?: string | Element, hydrating?: boolean): Component {
   el = el && query(el)
 
   /* istanbul ignore if */
@@ -28,7 +28,8 @@ Vue.prototype.$mount = function (
     )
     return this
   }
-
+  
+  // vue配置
   const options = this.$options
   // resolve template/el and convert to render function
   if (!options.render) {

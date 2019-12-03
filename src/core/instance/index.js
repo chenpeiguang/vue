@@ -1,8 +1,13 @@
+
 import { initMixin } from './init'
 import { stateMixin } from './state'
+// 渲染
 import { renderMixin } from './render'
+// 事件
 import { eventsMixin } from './events'
+// 生命周期
 import { lifecycleMixin } from './lifecycle'
+// 工具方法
 import { warn } from '../util/index'
 
 function Vue (options) {
