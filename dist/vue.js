@@ -11901,13 +11901,18 @@
     // vue配置
     var options = this.$options;
     // resolve template/el and convert to render function
+    // 如果没有render函数
     if (!options.render) {
       var template = options.template;
+      // 看有没有template
       if (template) {
         if (typeof template === 'string') {
+          //  看一下template是不是一个id
           if (template.charAt(0) === '#') {
+            // 如果是，就根据id去获取innerhtml,把innerhtml作为template
             template = idToTemplate(template);
             /* istanbul ignore if */
+            // 如果template为空就警告
             if ( !template) {
               warn(
                 ("Template element not found or is empty: " + (options.template)),
@@ -11931,7 +11936,7 @@
         if ( config.performance && mark) {
           mark('compile');
         }
-
+        // 这里把template转换为render函数
         var ref = compileToFunctions(template, {
           outputSourceRange: "development" !== 'production',
           shouldDecodeNewlines: shouldDecodeNewlines,
@@ -11942,6 +11947,7 @@
         var render = ref.render;
         var staticRenderFns = ref.staticRenderFns;
         options.render = render;
+        console.log('render:', render);
         options.staticRenderFns = staticRenderFns;
 
         /* istanbul ignore if */

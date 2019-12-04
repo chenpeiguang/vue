@@ -22,12 +22,13 @@
     <script src="../../dist/vue.js"></script>
   </head>
   <body>
-    <div id="demo"></div>
+    <div id="demo"><p>3</p></div>
+    <div id="app"></div>
     <script>
       new Vue({
 
-        el: '#demo',
-
+        // el: '#app',
+        template: `#demo`,
         data: {
           branches: ['master', 'dev'],
           currentBranch: 'master',
@@ -35,13 +36,13 @@
         },
 
         created: function () {
-         
+         console.log(0)
         },
 
 
         methods: {
         }
-      })
+      }).$mount('#app')
     </script>
   </body>
 </html>

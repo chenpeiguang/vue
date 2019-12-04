@@ -32,13 +32,18 @@ Vue.prototype.$mount = function (el?: string | Element, hydrating?: boolean): Co
   // vue配置
   const options = this.$options
   // resolve template/el and convert to render function
+  // 如果没有render函数
   if (!options.render) {
     let template = options.template
+    // 看有没有template
     if (template) {
       if (typeof template === 'string') {
+        //  看一下template是不是一个id
         if (template.charAt(0) === '#') {
+          // 如果是，就根据id去获取innerhtml,把innerhtml作为template
           template = idToTemplate(template)
           /* istanbul ignore if */
+          // 如果template为空就警告
           if (process.env.NODE_ENV !== 'production' && !template) {
             warn(
               `Template element not found or is empty: ${options.template}`,
@@ -62,7 +67,7 @@ Vue.prototype.$mount = function (el?: string | Element, hydrating?: boolean): Co
       if (process.env.NODE_ENV !== 'production' && config.performance && mark) {
         mark('compile')
       }
-
+      // 这里把template转换为render函数
       const { render, staticRenderFns } = compileToFunctions(template, {
         outputSourceRange: process.env.NODE_ENV !== 'production',
         shouldDecodeNewlines,
@@ -71,6 +76,7 @@ Vue.prototype.$mount = function (el?: string | Element, hydrating?: boolean): Co
         comments: options.comments
       }, this)
       options.render = render
+      console.log('render:', render)
       options.staticRenderFns = staticRenderFns
 
       /* istanbul ignore if */
