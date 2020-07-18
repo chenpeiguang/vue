@@ -697,20 +697,25 @@ export function createPatchFunction (backend) {
     }
   }
 
+
   return function patch (oldVnode, vnode, hydrating, removeOnly) {
+    // 如果新的vnode不存在
     if (isUndef(vnode)) {
-      if (isDef(oldVnode)) invokeDestroyHook(oldVnode)
+      // 如果旧的vnode存在 一般是一段元素从DOM里面删除触发
+      if (isDef(oldVnode)) invokeDestroyHook(oldVnode) //就触发销毁钩子，然后返回
       return
     }
 
     let isInitialPatch = false
     const insertedVnodeQueue = []
-
+    // 如果旧的vnode不存在，说明是第一次创建，比如页面第一次渲染
     if (isUndef(oldVnode)) {
       // empty mount (likely as component), create new root element
       isInitialPatch = true
+      // 调用create直接创建
       createElm(vnode, insertedVnodeQueue)
     } else {
+      // 标记旧的vnode是不是真实的DOM元素(是不是已经在DOM中渲染过， 如果是做了ssr，在server渲染的时，就不是真实DOM元素)
       const isRealElement = isDef(oldVnode.nodeType)
       if (!isRealElement && sameVnode(oldVnode, vnode)) {
         // patch existing root node
