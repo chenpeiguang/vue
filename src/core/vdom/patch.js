@@ -506,7 +506,7 @@ export function createPatchFunction (backend) {
     index,
     removeOnly
   ) {
-    // 旧的就会有elm
+    // 旧的就会有elm, elm是真实的DOM节点树
     console.log('oldVnode => ',oldVnode.elm)
     // 新的这个时候还没有elm
     console.log('vnode => ',vnode)
@@ -519,9 +519,10 @@ export function createPatchFunction (backend) {
       // clone reused vnode
       vnode = ownerArray[index] = cloneVNode(vnode)
     }
-    // 直接把旧的elm赋值到新的vnode下面，简单粗暴
+    // 直接把旧的elm赋值到新的vnode下面，简单粗暴,下面操作dom的时候，以elm为父级
+    // 操作DOM方法在这 src/platforms/web/runtime/node-ops.js
     const elm = vnode.elm = oldVnode.elm
-
+    console.log('elm => ', elm)
     if (isTrue(oldVnode.isAsyncPlaceholder)) {
       if (isDef(vnode.asyncFactory.resolved)) {
         hydrate(oldVnode.elm, vnode, insertedVnodeQueue)
@@ -559,21 +560,30 @@ export function createPatchFunction (backend) {
       for (i = 0; i < cbs.update.length; ++i) cbs.update[i](oldVnode, vnode)
       if (isDef(i = data.hook) && isDef(i = i.update)) i(oldVnode, vnode)
     }
+    // 如果新vnode没有text文本的话
+    // 这里要注意一下，有text就没有children， 有children就没有text,两者互斥
     if (isUndef(vnode.text)) {
+      // 如果新旧都有子节点就去updateChildren
       if (isDef(oldCh) && isDef(ch)) {
+        // dom diff核心
         if (oldCh !== ch) updateChildren(elm, oldCh, ch, insertedVnodeQueue, removeOnly)
-      } else if (isDef(ch)) {
+      } else if (isDef(ch)) { //如果新的有子节点
         if (process.env.NODE_ENV !== 'production') {
           checkDuplicateKeys(ch)
         }
+        // 如果旧的vnode有text，就说明没有子节点，那就先把里面的文本清空
         if (isDef(oldVnode.text)) nodeOps.setTextContent(elm, '')
+        // 然后把新的vnode直接插入
         addVnodes(elm, null, ch, 0, ch.length - 1, insertedVnodeQueue)
-      } else if (isDef(oldCh)) {
+      } else if (isDef(oldCh)) { 
+        //如果旧的有子节点，新的没有，就移除
         removeVnodes(oldCh, 0, oldCh.length - 1)
       } else if (isDef(oldVnode.text)) {
+        // 最后，如果旧的有文本节点，直接清空，因为新的vnode里面这个时候没有子节点
         nodeOps.setTextContent(elm, '')
       }
     } else if (oldVnode.text !== vnode.text) {
+      // 假如新旧的text不一样的话，直接那新vnode的text去更新
       nodeOps.setTextContent(elm, vnode.text)
     }
     if (isDef(data)) {
