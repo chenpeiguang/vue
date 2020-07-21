@@ -6267,6 +6267,11 @@
       index,
       removeOnly
     ) {
+      // 旧的就会有elm
+      console.log('oldVnode => ',oldVnode.elm);
+      // 新的这个时候还没有elm
+      console.log('vnode => ',vnode);
+      debugger
       if (oldVnode === vnode) {
         return
       }
@@ -6275,7 +6280,7 @@
         // clone reused vnode
         vnode = ownerArray[index] = cloneVNode(vnode);
       }
-
+      // 直接把旧的elm赋值到新的vnode下面，简单粗暴
       var elm = vnode.elm = oldVnode.elm;
 
       if (isTrue(oldVnode.isAsyncPlaceholder)) {
@@ -6291,6 +6296,9 @@
       // note we only do this if the vnode is cloned -
       // if the new node is not cloned it means the render functions have been
       // reset by the hot-reload-api and we need to do a proper re-render.
+      // 如果新老节点都是静态节点，并且key相同，那么就可以认为是同一个静态节点，直接把组件实例替换一下就可以了
+      // 关于静态节点的判断，vnode下面会有一个isStatic属性，如果这个节点的孩子节点不是静态的，就不算是静态节点
+      // 换句话说就是，如果有isStatic属性并且为true，那么他的子节点也一定是静态节点
       if (isTrue(vnode.isStatic) &&
         isTrue(oldVnode.isStatic) &&
         vnode.key === oldVnode.key &&
@@ -6305,7 +6313,7 @@
       if (isDef(data) && isDef(i = data.hook) && isDef(i = i.prepatch)) {
         i(oldVnode, vnode);
       }
-
+      // 下面是新旧children的对比更新
       var oldCh = oldVnode.children;
       var ch = vnode.children;
       if (isDef(data) && isPatchable(vnode)) {
@@ -6463,6 +6471,7 @@
 
     return function patch (oldVnode, vnode, hydrating, removeOnly) {
       console.log('vnode => ', vnode);
+      // debugger
       // 如果新的vnode不存在
       if (isUndef(vnode)) {
         // 如果旧的vnode存在 一般是一段元素从DOM里面删除触发
@@ -6479,10 +6488,11 @@
         // 调用create直接创建
         createElm(vnode, insertedVnodeQueue);
       } else {
-        // 标记旧的vnode是不是真实的DOM元素(是不是已经在DOM中渲染过， 如果是做了ssr，在server渲染的时，就不是真实DOM元素)
+        // 标记旧的vnode是不是真实的DOM元素(如果是第一次渲染，oldVnode就是你mount挂载的那一段节点，这个时候，就是真实节点)
         var isRealElement = isDef(oldVnode.nodeType);
         if (!isRealElement && sameVnode(oldVnode, vnode)) {
           // patch existing root node
+          debugger
           patchVnode(oldVnode, vnode, insertedVnodeQueue, null, null, removeOnly);
         } else {
           if (isRealElement) {
