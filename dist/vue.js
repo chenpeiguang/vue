@@ -1,6 +1,6 @@
 /*!
  * Vue.js v2.6.10
- * (c) 2014-2019 Evan You
+ * (c) 2014-2020 Evan You
  * Released under the MIT License.
  */
 (function (global, factory) {
@@ -6460,20 +6460,26 @@
       }
     }
 
+
     return function patch (oldVnode, vnode, hydrating, removeOnly) {
+      console.log('vnode => ', vnode);
+      // 如果新的vnode不存在
       if (isUndef(vnode)) {
-        if (isDef(oldVnode)) { invokeDestroyHook(oldVnode); }
+        // 如果旧的vnode存在 一般是一段元素从DOM里面删除触发
+        if (isDef(oldVnode)) { invokeDestroyHook(oldVnode); } //就触发销毁钩子，然后返回
         return
       }
 
       var isInitialPatch = false;
       var insertedVnodeQueue = [];
-
+      // 如果旧的vnode不存在，说明是第一次创建，比如组件创建
       if (isUndef(oldVnode)) {
         // empty mount (likely as component), create new root element
         isInitialPatch = true;
+        // 调用create直接创建
         createElm(vnode, insertedVnodeQueue);
       } else {
+        // 标记旧的vnode是不是真实的DOM元素(是不是已经在DOM中渲染过， 如果是做了ssr，在server渲染的时，就不是真实DOM元素)
         var isRealElement = isDef(oldVnode.nodeType);
         if (!isRealElement && sameVnode(oldVnode, vnode)) {
           // patch existing root node
@@ -6511,6 +6517,7 @@
           var parentElm = nodeOps.parentNode(oldElm);
 
           // create new node
+          console.log(vnode);
           createElm(
             vnode,
             insertedVnodeQueue,
@@ -6520,7 +6527,7 @@
             oldElm._leaveCb ? null : parentElm,
             nodeOps.nextSibling(oldElm)
           );
-
+          console.log(vnode);
           // update parent placeholder node element, recursively
           if (isDef(vnode.parent)) {
             var ancestor = vnode.parent;
@@ -6551,7 +6558,7 @@
             }
           }
 
-          // destroy old node
+          // destroy old node 删除旧的DOM节点
           if (isDef(parentElm)) {
             removeVnodes([oldVnode], 0, 0);
           } else if (isDef(oldVnode.tag)) {
@@ -6559,8 +6566,9 @@
           }
         }
       }
-
+      // 旧的节点删除之后，插入新的节点，
       invokeInsertHook(vnode, insertedVnodeQueue, isInitialPatch);
+      console.log('vnode.elm => ', vnode.elm);
       return vnode.elm
     }
   }

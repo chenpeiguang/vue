@@ -699,6 +699,7 @@ export function createPatchFunction (backend) {
 
 
   return function patch (oldVnode, vnode, hydrating, removeOnly) {
+    console.log('vnode => ', vnode)
     // 如果新的vnode不存在
     if (isUndef(vnode)) {
       // 如果旧的vnode存在 一般是一段元素从DOM里面删除触发
@@ -708,7 +709,7 @@ export function createPatchFunction (backend) {
 
     let isInitialPatch = false
     const insertedVnodeQueue = []
-    // 如果旧的vnode不存在，说明是第一次创建，比如页面第一次渲染
+    // 如果旧的vnode不存在，说明是第一次创建，比如组件创建
     if (isUndef(oldVnode)) {
       // empty mount (likely as component), create new root element
       isInitialPatch = true
@@ -753,6 +754,7 @@ export function createPatchFunction (backend) {
         const parentElm = nodeOps.parentNode(oldElm)
 
         // create new node
+        console.log(vnode)
         createElm(
           vnode,
           insertedVnodeQueue,
@@ -762,7 +764,7 @@ export function createPatchFunction (backend) {
           oldElm._leaveCb ? null : parentElm,
           nodeOps.nextSibling(oldElm)
         )
-
+        console.log(vnode)
         // update parent placeholder node element, recursively
         if (isDef(vnode.parent)) {
           let ancestor = vnode.parent
@@ -793,7 +795,7 @@ export function createPatchFunction (backend) {
           }
         }
 
-        // destroy old node
+        // destroy old node 删除旧的DOM节点
         if (isDef(parentElm)) {
           removeVnodes([oldVnode], 0, 0)
         } else if (isDef(oldVnode.tag)) {
@@ -801,8 +803,9 @@ export function createPatchFunction (backend) {
         }
       }
     }
-
+    // 旧的节点删除之后，插入新的节点，
     invokeInsertHook(vnode, insertedVnodeQueue, isInitialPatch)
+    console.log('vnode.elm => ', vnode.elm)
     return vnode.elm
   }
 }

@@ -22,17 +22,20 @@
     <script src="../../dist/vue.js"></script>
   </head>
   <body>
-    <div id="demo"><p>3</p></div>
-    <div id="app"></div>
+    <!-- <div id="demo"><p>3</p></div> -->
+    <div id="app">
+      <p>{{test}}</p>
+    </div>
     <script>
       new Vue({
 
         // el: '#app',
-        template: `#demo`,
+        // template: `#app`,
         data: {
           branches: ['master', 'dev'],
           currentBranch: 'master',
-          commits: null
+          commits: null,
+          test: 'fdfd'
         },
 
         created: function () {
