@@ -1083,16 +1083,22 @@
     ) {
       warn(("Cannot set reactive property on undefined, null, or primitive value: " + ((target))));
     }
+    // 如果是数组，并且是一个合法的索引
     if (Array.isArray(target) && isValidArrayIndex(key)) {
+      // 重置一下数组长度避免越界
       target.length = Math.max(target.length, key);
+      // 然后用splice替换一下当前索引数组的值
       target.splice(key, 1, val);
       return val
     }
+
     if (key in target && !(key in Object.prototype)) {
       target[key] = val;
       return val
     }
+    // ob是当前实例
     var ob = (target).__ob__;
+    // 不允许在根组件上设置
     if (target._isVue || (ob && ob.vmCount)) {
        warn(
         'Avoid adding reactive properties to a Vue instance or its root $data ' +
@@ -1100,11 +1106,14 @@
       );
       return val
     }
+    // 如果找不到vue实例，说明是一个普通对象，直接设置一下返回
     if (!ob) {
       target[key] = val;
       return val
     }
+    // 响应式处理
     defineReactive(ob.value, key, val);
+    // 触发一下通知，更新界面
     ob.dep.notify();
     return val
   }
@@ -1118,6 +1127,7 @@
     ) {
       warn(("Cannot delete reactive property on undefined, null, or primitive value: " + ((target))));
     }
+    // 是数组，并且是一个合法的索引，直接splice删除
     if (Array.isArray(target) && isValidArrayIndex(key)) {
       target.splice(key, 1);
       return
@@ -1130,13 +1140,17 @@
       );
       return
     }
+    // 当前target不存在这个key，不做任何处理
     if (!hasOwn(target, key)) {
       return
     }
+    // 删除指定的值
     delete target[key];
+    // 如果当前target不是响应式的话 ，就返回，不用触发通知
     if (!ob) {
       return
     }
+    // 触发一下通知
     ob.dep.notify();
   }
 

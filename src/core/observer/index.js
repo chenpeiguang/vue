@@ -204,16 +204,20 @@ export function set (target: Array<any> | Object, key: any, val: any): any {
   ) {
     warn(`Cannot set reactive property on undefined, null, or primitive value: ${(target: any)}`)
   }
+  // 如果是数组，并且是一个合法的索引
   if (Array.isArray(target) && isValidArrayIndex(key)) {
     target.length = Math.max(target.length, key)
     target.splice(key, 1, val)
     return val
   }
+
   if (key in target && !(key in Object.prototype)) {
     target[key] = val
     return val
   }
+  // ob是当前实例
   const ob = (target: any).__ob__
+  // 不允许在根组件上设置
   if (target._isVue || (ob && ob.vmCount)) {
     process.env.NODE_ENV !== 'production' && warn(
       'Avoid adding reactive properties to a Vue instance or its root $data ' +
@@ -221,11 +225,14 @@ export function set (target: Array<any> | Object, key: any, val: any): any {
     )
     return val
   }
+  // 如果找不到vue实例，说明是一个普通对象，直接设置一下返回
   if (!ob) {
     target[key] = val
     return val
   }
+  // 响应式处理
   defineReactive(ob.value, key, val)
+  // 触发一下通知，更新界面
   ob.dep.notify()
   return val
 }
@@ -239,6 +246,7 @@ export function del (target: Array<any> | Object, key: any) {
   ) {
     warn(`Cannot delete reactive property on undefined, null, or primitive value: ${(target: any)}`)
   }
+  // 是数组，并且是一个合法的索引，直接splice删除
   if (Array.isArray(target) && isValidArrayIndex(key)) {
     target.splice(key, 1)
     return
@@ -251,13 +259,17 @@ export function del (target: Array<any> | Object, key: any) {
     )
     return
   }
+  // 当前target不存在这个key，不做任何处理
   if (!hasOwn(target, key)) {
     return
   }
+  // 删除指定的值
   delete target[key]
+  // 如果当前target不是响应式的话 ，就返回，不用触发通知
   if (!ob) {
     return
   }
+  // 触发一下通知
   ob.dep.notify()
 }
 
