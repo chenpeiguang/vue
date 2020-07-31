@@ -46,6 +46,8 @@ export function parseText (
     rawTokens.push(tokenValue = text.slice(lastIndex))
     tokens.push(JSON.stringify(tokenValue))
   }
+  console.log(tokens.join('+'))
+  console.log(rawTokens)
   return {
     expression: tokens.join('+'),
     tokens: rawTokens

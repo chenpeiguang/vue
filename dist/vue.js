@@ -9153,6 +9153,8 @@
       rawTokens.push(tokenValue = text.slice(lastIndex));
       tokens.push(JSON.stringify(tokenValue));
     }
+    console.log(tokens.join('+'));
+    console.log(rawTokens);
     return {
       expression: tokens.join('+'),
       tokens: rawTokens
@@ -10753,9 +10755,11 @@
   }
 
   function isStatic (node) {
+    // 表达式不是静态节点
     if (node.type === 2) { // expression
       return false
     }
+    // 不带变量的文本是静态节点
     if (node.type === 3) { // text
       return true
     }

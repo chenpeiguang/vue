@@ -98,9 +98,11 @@ function markStaticRoots (node: ASTNode, isInFor: boolean) {
 }
 
 function isStatic (node: ASTNode): boolean {
+  // 表达式不是静态节点
   if (node.type === 2) { // expression
     return false
   }
+  // 不带变量的文本是静态节点
   if (node.type === 3) { // text
     return true
   }
