@@ -22,6 +22,7 @@ Vue.prototype.$mount = function (el?: string | Element, hydrating?: boolean): Co
   el = el && query(el)
 
   /* istanbul ignore if */
+  // 这里在开发环境下，如果挂载点是body或者documentElement的话，⚠警告
   if (el === document.body || el === document.documentElement) {
     process.env.NODE_ENV !== 'production' && warn(
       `Do not mount Vue to <html> or <body> - mount to normal elements instead.`
@@ -51,15 +52,15 @@ Vue.prototype.$mount = function (el?: string | Element, hydrating?: boolean): Co
             )
           }
         }
-      } else if (template.nodeType) {
+      } else if (template.nodeType) { //如果是一个template模板就取innerHTML
         template = template.innerHTML
-      } else {
+      } else { //template非法
         if (process.env.NODE_ENV !== 'production') {
           warn('invalid template option:' + template, this)
         }
         return this
       }
-    } else if (el) {
+    } else if (el) { //如果传入的是一个节点，那么获取节点内容
       template = getOuterHTML(el)
     }
     if (template) {

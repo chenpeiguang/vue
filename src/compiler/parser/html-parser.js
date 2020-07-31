@@ -52,17 +52,28 @@ function decodeAttr (value, shouldDecodeNewlines) {
 }
 
 export function parseHTML (html, options) {
+  // 这个栈，用来维护template里面的节点层级关系
   const stack = []
   const expectHTML = options.expectHTML
+  // 是否是自闭合标签，比如 <input />
   const isUnaryTag = options.isUnaryTag || no
   const canBeLeftOpenTag = options.canBeLeftOpenTag || no
   let index = 0
   let last, lastTag
+  // 循环template，直到为空
   while (html) {
     last = html
     // Make sure we're not in a plaintext content element like script/style
+    // 这里判断一下，如果是script和style之类的，要区分处理
     if (!lastTag || !isPlainTextElement(lastTag)) {
+
       let textEnd = html.indexOf('<')
+      // 如果索引是0的话，可能的情况有
+      /* 
+       1.注释 <!-- -->
+       2.标签开头 <div>
+       3.标签结尾 </div>
+      */
       if (textEnd === 0) {
         // Comment:
         if (comment.test(html)) {
@@ -76,7 +87,6 @@ export function parseHTML (html, options) {
             continue
           }
         }
-
         // http://en.wikipedia.org/wiki/Conditional_comment#Downlevel-revealed_conditional_comment
         if (conditionalComment.test(html)) {
           const conditionalEnd = html.indexOf(']>')
@@ -115,6 +125,7 @@ export function parseHTML (html, options) {
       }
 
       let text, rest, next
+      // 说明是文本 还要判断一下===0的情况，因为有可能文本里面就有<
       if (textEnd >= 0) {
         rest = html.slice(textEnd)
         while (
@@ -137,9 +148,10 @@ export function parseHTML (html, options) {
       }
 
       if (text) {
+        // 截取文本
         advance(text.length)
       }
-
+      // 如果文本存在的话，就调用chars去解释构建AST
       if (options.chars && text) {
         options.chars(text, index - text.length, index)
       }
@@ -179,6 +191,7 @@ export function parseHTML (html, options) {
   // Clean up any remaining tags
   parseEndTag()
 
+  // 移动截取
   function advance (n) {
     index += n
     html = html.substring(n)
