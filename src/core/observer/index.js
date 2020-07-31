@@ -206,7 +206,9 @@ export function set (target: Array<any> | Object, key: any, val: any): any {
   }
   // 如果是数组，并且是一个合法的索引
   if (Array.isArray(target) && isValidArrayIndex(key)) {
+    // 重置一下数组长度避免越界
     target.length = Math.max(target.length, key)
+    // 然后用splice替换一下当前索引数组的值
     target.splice(key, 1, val)
     return val
   }
