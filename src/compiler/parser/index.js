@@ -358,6 +358,7 @@ export function parse (
         }
         let res
         let child: ?ASTNode
+        // parseText解释后，如果有返回值，就说明是有变量的文本
         if (!inVPre && text !== ' ' && (res = parseText(text, delimiters))) {
           child = {
             type: 2,

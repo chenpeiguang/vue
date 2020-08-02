@@ -75,7 +75,7 @@ export function parseHTML (html, options) {
        3.标签结尾 </div>
       */
       if (textEnd === 0) {
-        // Comment:
+        // Comment:注释
         if (comment.test(html)) {
           const commentEnd = html.indexOf('-->')
 
@@ -87,6 +87,7 @@ export function parseHTML (html, options) {
             continue
           }
         }
+        // 条件注释
         // http://en.wikipedia.org/wiki/Conditional_comment#Downlevel-revealed_conditional_comment
         if (conditionalComment.test(html)) {
           const conditionalEnd = html.indexOf(']>')
@@ -104,7 +105,7 @@ export function parseHTML (html, options) {
           continue
         }
 
-        // End tag:
+        // End tag: 结束标签
         const endTagMatch = html.match(endTag)
         if (endTagMatch) {
           const curIndex = index
@@ -113,9 +114,10 @@ export function parseHTML (html, options) {
           continue
         }
 
-        // Start tag:
+        // Start tag:开始标签
         const startTagMatch = parseStartTag()
         if (startTagMatch) {
+          // 开始标签处理逻辑
           handleStartTag(startTagMatch)
           if (shouldIgnoreFirstNewline(startTagMatch.tagName, html)) {
             advance(1)
@@ -127,6 +129,7 @@ export function parseHTML (html, options) {
       let text, rest, next
       // 说明是文本 还要判断一下===0的情况，因为有可能文本里面就有<
       if (textEnd >= 0) {
+        // 解释文本
         rest = html.slice(textEnd)
         while (
           !endTag.test(rest) &&
@@ -156,6 +159,7 @@ export function parseHTML (html, options) {
         options.chars(text, index - text.length, index)
       }
     } else {
+      // 父级为script,style, textarea的情况要特殊处理一下
       let endTagLength = 0
       const stackedTag = lastTag.toLowerCase()
       const reStackedTag = reCache[stackedTag] || (reCache[stackedTag] = new RegExp('([\\s\\S]*?)(</' + stackedTag + '[^>]*>)', 'i'))
