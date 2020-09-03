@@ -360,7 +360,6 @@ export function parse (
         let child: ?ASTNode
         // parseText解释后，如果有返回值，就说明是有变量的文本
         if (!inVPre && text !== ' ' && (res = parseText(text, delimiters))) {
-          console.log('res.expression => ', res.expression)
           child = {
             type: 2,
             expression: res.expression,

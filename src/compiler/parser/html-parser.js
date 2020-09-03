@@ -19,7 +19,6 @@ const dynamicArgAttribute = /^\s*((?:v-[\w-]+:|@|:|#)\[[^=]+\][^\s"'<>\/=]*)(?:\
 const ncname = `[a-zA-Z_][\\-\\.0-9_a-zA-Z${unicodeRegExp.source}]*`
 const qnameCapture = `((?:${ncname}\\:)?${ncname})`
 const startTagOpen = new RegExp(`^<${qnameCapture}`)
-console.log('startTagOpen => ',startTagOpen)
 const startTagClose = /^\s*(\/?)>/
 const endTag = new RegExp(`^<\\/${qnameCapture}[^>]*>`)
 const doctype = /^<!DOCTYPE [^>]+>/i
@@ -63,7 +62,6 @@ export function parseHTML (html, options) {
   let last, lastTag
   // 循环template，直到为空
   while (html) {
-    console.log('stack => ', stack.splice(''))
     last = html
     // Make sure we're not in a plaintext content element like script/style
     // 这里判断一下，如果是script和style之类的，要区分处理
@@ -201,7 +199,6 @@ export function parseHTML (html, options) {
   function advance (n) {
     index += n
     html = html.substring(n)
-    console.log('advance => ',index, n, html)
   }
 
   function parseStartTag () {
@@ -224,7 +221,6 @@ export function parseHTML (html, options) {
         match.unarySlash = end[1]
         advance(end[0].length)
         match.end = index
-        console.log('match => ', match)
         return match
       }
     }

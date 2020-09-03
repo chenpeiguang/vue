@@ -9308,7 +9308,6 @@
   var ncname = "[a-zA-Z_][\\-\\.0-9_a-zA-Z" + (unicodeRegExp.source) + "]*";
   var qnameCapture = "((?:" + ncname + "\\:)?" + ncname + ")";
   var startTagOpen = new RegExp(("^<" + qnameCapture));
-  console.log('startTagOpen => ',startTagOpen);
   var startTagClose = /^\s*(\/?)>/;
   var endTag = new RegExp(("^<\\/" + qnameCapture + "[^>]*>"));
   var doctype = /^<!DOCTYPE [^>]+>/i;
@@ -9352,7 +9351,6 @@
     var last, lastTag;
     // 循环template，直到为空
     while (html) {
-      console.log('stack => ', stack.splice(''));
       last = html;
       // Make sure we're not in a plaintext content element like script/style
       // 这里判断一下，如果是script和style之类的，要区分处理
@@ -9486,7 +9484,6 @@
     function advance (n) {
       index += n;
       html = html.substring(n);
-      console.log('advance => ',index, n, html);
     }
 
     function parseStartTag () {
@@ -9509,7 +9506,6 @@
           match.unarySlash = end[1];
           advance(end[0].length);
           match.end = index;
-          console.log('match => ', match);
           return match
         }
       }
@@ -9948,7 +9944,6 @@
           var res;
           var child;
           if (!inVPre && text !== ' ' && (res = parseText(text, delimiters))) {
-            console.log('res.expression => ', res.expression);
             child = {
               type: 2,
               expression: res.expression,
