@@ -9308,6 +9308,7 @@
   var ncname = "[a-zA-Z_][\\-\\.0-9_a-zA-Z" + (unicodeRegExp.source) + "]*";
   var qnameCapture = "((?:" + ncname + "\\:)?" + ncname + ")";
   var startTagOpen = new RegExp(("^<" + qnameCapture));
+  console.log('startTagOpen => ',startTagOpen);
   var startTagClose = /^\s*(\/?)>/;
   var endTag = new RegExp(("^<\\/" + qnameCapture + "[^>]*>"));
   var doctype = /^<!DOCTYPE [^>]+>/i;
@@ -9351,6 +9352,7 @@
     var last, lastTag;
     // 循环template，直到为空
     while (html) {
+      console.log('stack => ', stack.splice(''));
       last = html;
       // Make sure we're not in a plaintext content element like script/style
       // 这里判断一下，如果是script和style之类的，要区分处理
@@ -9364,7 +9366,7 @@
          3.标签结尾 </div>
         */
         if (textEnd === 0) {
-          // Comment:
+          // Comment:注释
           if (comment.test(html)) {
             var commentEnd = html.indexOf('-->');
 
@@ -9376,6 +9378,7 @@
               continue
             }
           }
+          // 条件注释
           // http://en.wikipedia.org/wiki/Conditional_comment#Downlevel-revealed_conditional_comment
           if (conditionalComment.test(html)) {
             var conditionalEnd = html.indexOf(']>');
@@ -9393,7 +9396,7 @@
             continue
           }
 
-          // End tag:
+          // End tag: 结束标签
           var endTagMatch = html.match(endTag);
           if (endTagMatch) {
             var curIndex = index;
@@ -9402,9 +9405,10 @@
             continue
           }
 
-          // Start tag:
+          // Start tag:开始标签
           var startTagMatch = parseStartTag();
           if (startTagMatch) {
+            // 开始标签处理逻辑
             handleStartTag(startTagMatch);
             if (shouldIgnoreFirstNewline(startTagMatch.tagName, html)) {
               advance(1);
@@ -9416,6 +9420,7 @@
         var text = (void 0), rest = (void 0), next = (void 0);
         // 说明是文本 还要判断一下===0的情况，因为有可能文本里面就有<
         if (textEnd >= 0) {
+          // 解释文本
           rest = html.slice(textEnd);
           while (
             !endTag.test(rest) &&
@@ -9445,6 +9450,7 @@
           options.chars(text, index - text.length, index);
         }
       } else {
+        // 父级为script,style, textarea的情况要特殊处理一下
         var endTagLength = 0;
         var stackedTag = lastTag.toLowerCase();
         var reStackedTag = reCache[stackedTag] || (reCache[stackedTag] = new RegExp('([\\s\\S]*?)(</' + stackedTag + '[^>]*>)', 'i'));
@@ -9484,6 +9490,7 @@
     function advance (n) {
       index += n;
       html = html.substring(n);
+      console.log('advance => ',index, n, html);
     }
 
     function parseStartTag () {
@@ -9506,6 +9513,7 @@
           match.unarySlash = end[1];
           advance(end[0].length);
           match.end = index;
+          console.log('match => ', match);
           return match
         }
       }
@@ -9943,7 +9951,9 @@
           }
           var res;
           var child;
+          // parseText解释后，如果有返回值，就说明是有变量的文本
           if (!inVPre && text !== ' ' && (res = parseText(text, delimiters))) {
+            console.log('res.expression => ', res.expression);
             child = {
               type: 2,
               expression: res.expression,
