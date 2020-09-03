@@ -9151,8 +9151,6 @@
     var lastIndex = tagRE.lastIndex = 0;
     var match, index, tokenValue;
     while ((match = tagRE.exec(text))) {
-      console.log('text => ', text.toString());
-      console.log('match => ', match);
       index = match.index;
       // push text token
       if (index > lastIndex) {
@@ -9169,7 +9167,6 @@
       rawTokens.push(tokenValue = text.slice(lastIndex));
       tokens.push(JSON.stringify(tokenValue));
     }
-    console.log(tokens);
     console.log(tokens.join('+'));
     console.log(rawTokens);
     return {
@@ -9369,7 +9366,7 @@
          3.标签结尾 </div>
         */
         if (textEnd === 0) {
-          // Comment:注释
+          // Comment:
           if (comment.test(html)) {
             var commentEnd = html.indexOf('-->');
 
@@ -9381,7 +9378,6 @@
               continue
             }
           }
-          // 条件注释
           // http://en.wikipedia.org/wiki/Conditional_comment#Downlevel-revealed_conditional_comment
           if (conditionalComment.test(html)) {
             var conditionalEnd = html.indexOf(']>');
@@ -9399,7 +9395,7 @@
             continue
           }
 
-          // End tag: 结束标签
+          // End tag:
           var endTagMatch = html.match(endTag);
           if (endTagMatch) {
             var curIndex = index;
@@ -9408,10 +9404,9 @@
             continue
           }
 
-          // Start tag:开始标签
+          // Start tag:
           var startTagMatch = parseStartTag();
           if (startTagMatch) {
-            // 开始标签处理逻辑
             handleStartTag(startTagMatch);
             if (shouldIgnoreFirstNewline(startTagMatch.tagName, html)) {
               advance(1);
@@ -9423,7 +9418,6 @@
         var text = (void 0), rest = (void 0), next = (void 0);
         // 说明是文本 还要判断一下===0的情况，因为有可能文本里面就有<
         if (textEnd >= 0) {
-          // 解释文本
           rest = html.slice(textEnd);
           while (
             !endTag.test(rest) &&
@@ -9453,7 +9447,6 @@
           options.chars(text, index - text.length, index);
         }
       } else {
-        // 父级为script,style, textarea的情况要特殊处理一下
         var endTagLength = 0;
         var stackedTag = lastTag.toLowerCase();
         var reStackedTag = reCache[stackedTag] || (reCache[stackedTag] = new RegExp('([\\s\\S]*?)(</' + stackedTag + '[^>]*>)', 'i'));
@@ -9954,7 +9947,6 @@
           }
           var res;
           var child;
-          // parseText解释后，如果有返回值，就说明是有变量的文本
           if (!inVPre && text !== ' ' && (res = parseText(text, delimiters))) {
             console.log('res.expression => ', res.expression);
             child = {
