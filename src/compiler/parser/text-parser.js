@@ -30,6 +30,8 @@ export function parseText (
   let lastIndex = tagRE.lastIndex = 0
   let match, index, tokenValue
   while ((match = tagRE.exec(text))) {
+    console.log('text => ', text.toString())
+    console.log('match => ', match)
     index = match.index
     // push text token
     if (index > lastIndex) {
@@ -46,6 +48,7 @@ export function parseText (
     rawTokens.push(tokenValue = text.slice(lastIndex))
     tokens.push(JSON.stringify(tokenValue))
   }
+  console.log(tokens)
   console.log(tokens.join('+'))
   console.log(rawTokens)
   return {
